@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Rotator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1e1e2e;
+            color: #f8f8f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background: #282a36;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #ff79c6;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        #keyDisplay {
+            font-size: 1.2rem;
+            background: #44475a;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #keyDisplay:hover {
+            background-color: #6272a4;
+        }
+
+        #timer {
+            font-size: 1.1rem;
+            background: #6272a4;
+            padding: 10px;
+            border-radius: 8px;
+            color: #f1fa8c;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #6272a4;
+        }
+
+        .cta-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #50fa7b;
+            color: #282a36;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            background-color: #4aed73;
+        }
+
+        #copyMessage {
+            display: none;
+            color: #50fa7b;
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Key System</h1>
+    <div id="keyDisplay" onclick="copyKey()">Fetching your key...</div>
+    <div id="timer">Calculating next key...</div>
+    <button class="cta-btn" onclick="window.location.reload();">Refresh Page</button>
+    <div id="copyMessage">Key copied to clipboard!</div>
+    <div class="footer">Next key is available every 48 hours.</div>
+</div>
+
+<script>
+    
+    const keys = [
+        "SW-rve8aw3Rd02sflIOQmRCi1Y7WfTxv7Fu", "SW-Yo9RXK7nL5apIE6PGZd5GCtCqSW8PnrJ",
+        "SW-Oo3q7LOhfdNEOxrCzll7Bqjo7PnTV0lR", "SW-r4pWLRHjYXumPXFizS2secCKxYGAhWpE",
+        "SW-x4pDLVJkqZ0Pv4kmCOxtmLKc2G8yZGv1", "SW-QD3fLmvWY3Pn7VBpIEsGmSKDRk8nFXsQ",
+        
+        "SW-L1D7P9F6G3M4K2T8Y5H1R9B2N3X4C6W8y",             "SW-rve8aw3Rd02sflIOQmRCi1Y7WfTxv7Fu", "SW-Yo9RXK7nL5apIE6PGZd5GCtCqSW8PnrJ",
+            "SW-Oo3q7LOhfdNEOxrCzll7Bqjo7PnTV0lR", "SW-r4pWLRHjYXumPXFizS2secCKxYGAhWpE",
+            "SW-x4pDLVJkqZ0Pv4kmCOxtmLKc2G8yZGv1", "SW-QD3fLmvWY3Pn7VBpIEsGmSKDRk8nFXsQ",
+            "SW-Ck2rXLNmjHvQbzla7n5X2h3CRZW4r8xA", "SW-Y74zXGR9K2MvFwb1PIo9RLM8VhsDL7sq",
+            "SW-Hd1nZEkDJn3Oo4vaESmNLFn2qCP8p3TZ", "SW-Lu9oXZNm5FqRIt2QsGOcVJL5GcVKr9sD",
+            "SW-NK6aXFZ1kW5PoEwAsRnXC2ME7WpVHsCx", "SW-Rv3gYK7PLoQ8mz2NkCHzXgBJLW8qFNw5",
+            "SW-Ao5pYH2LkW7PoXsCtSnDLQJM6XqG9RTk", "SW-Mv7sXBrLqN9Qn4y8ZdCmFLJ3TpCw7UoR",
+            "SW-1LsXPlAm2Mn0YXx9fR7u9TCKoQP1ZkFt", "SW-2MvDLNj9YF7vGKm6cWpRM8ChPoW5rXsA",
+            "SW-3OvJLKm2XG8zLNs9cFtVp7YLqQP4vTnF", "SW-4LvVKXm3ZF9yHOq7bRsJL9DhQpV6zAsG",
+            "SW-5OvKRLn4BG0yINr8dUtKM0EjPoX7wYsH", "SW-6LvMLNm5CF1zJPq9eVwMN1FkRqW8xZtJ",
+            "SW-7NvPLQn6EG2yKOs0fWvOP2GlSoX9aUtK", "SW-8OvQLRn7FG3zLPt1gXwQP3HmToX0bVsL",
+            "SW-9PvSLUn8HG4zMQv2hYxRP4InUoY1cWsM", "SW-ALvTLVo9IG5zNRw3iZySP5JoVpY2dXtN",
+            "SW-BMvULWo0JG6zOSx4jAyTQ6KpWpZ3eYuO", "SW-CLvVMPo1KG7zPTy5kByUR7LpXpZ4fZvP",
+            "SW-DNvWNPp2LG8zQUz6lCyVS8MqYpZ5gAwQ", "SW-ELvXPQq3MH9zRV0nAzWT9NrZqZ6hBxR",
+            "SW-FOvYQRr4NI0zSW1oBzXT0OrZqZ7iCyS", "SW-GPvZRSo5OJ1zTX2pCzYU1PrZrZ8jDzT",
+            "SW-HQvASUp6PK2zUY3qDzZV2QrZsZ9kEzU", "SW-IRvBTVp7QL3zVZ4rEzAW3RrZtZ0lFaV",
+            "SW-JSvCUWq8RM4zWZ5sFzBX4SrZtZ1mGbW", "SW-KTvDVXr9SN5zXZ6tGzCY5TrZuZ2nHcX",
+            "SW-LUvEWBp0TO6zYZ7uHzDZ6UrZvZ3oIdY", "SW-MVvFXCq1UP7zZA8vIzE07VtZwZ4pJeZ",
+            "SW-NWvGYCp2VQ8zAB9wJzF18WsZwZ5qKf0", "SW-OVvHZDq3WR9zBC0xKzG29XrZwZ6rLg1",
+            "SW-PXvIAEp4XS0zCD1yLzH3AXsZzZ7sMh2", "SW-QYvJBFr5YT1zDE2zMzI4BYtZzZ8tNi3",
+            "SW-RZvKCGp6ZU2zEF3AMzJ5CZtZzZ9uOj4", "SW-SAvLDHp7AV3zFG4BNzK6DYuZ0Z0vPk5",
+            "SW-TBvMEIq8BW4zGH5COzL7EZvZ1Z1wQl6", "SW-UCvNFJr9CX5zHI6DPzM8FZuZ2Z2xRm7",
+            "SW-VDvOGKr0DY6zIJ7EQzN9GZvZ3Z3ySn8", "SW-WEvPHLs1EZ7zJK8FRzO0HZvZ4Z4zTo9",
+            "SW-XFvQIMr2FA8zKL9GSzP1IZvZ5Z5aUp0", "SW-w3TjVZbBLHlyjRqS2xmseJCxVdPfWsqhG",
+"SW-bXk9zRfKNRyhVqLgFjtWyYAHwzJqmdcHL","Key", "SW-9Xc7PRzQZgUqF8KNTbWm8q6w4J9dLhXfS",
+    ];
+
+    const keyDisplayElement = document.getElementById('keyDisplay');
+    const timerElement = document.getElementById('timer');
+    const copyMessageElement = document.getElementById('copyMessage');
+
+    
+    const ONE_DAY_MS = 48 * 60 * 60 * 1000;
+
+    
+    const now = Date.now();
+
+    
+    let lastAccess = localStorage.getItem('lastAccess');
+    let currentIndex = localStorage.getItem('keyIndex') || 0;
+
+    
+    function showKey() {
+        keyDisplayElement.innerHTML = `Your Key: <strong>${keys[currentIndex]}</strong>`;
+        timerElement.innerHTML = '';
+    }
+
+    
+    function showTimer(timeRemaining) {
+        const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+        timerElement.innerHTML = `Next key in: ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+   
+    function updateTimer(endTime) {
+        const interval = setInterval(() => {
+            const timeRemaining = endTime - Date.now();
+
+            if (timeRemaining <= 0) {
+                clearInterval(interval);
+                
+                currentIndex = (parseInt(currentIndex) + 1) % keys.length;
+                localStorage.setItem('keyIndex', currentIndex);
+                localStorage.setItem('lastAccess', Date.now());
+                showKey();
+            } else {
+                showTimer(timeRemaining);
+            }
+        }, 1000);
+    }
+
+    
+    if (!lastAccess || now - lastAccess >= ONE_DAY_MS) {
+        
+        showKey();
+
+        
+        localStorage.setItem('lastAccess', now);
+        localStorage.setItem('keyIndex', currentIndex);
+    } else {
+        
+        const timeRemaining = ONE_DAY_MS - (now - lastAccess);
+        showTimer(timeRemaining);
+        updateTimer(now + timeRemaining);
+    }
+
+   
+    function copyKey() {
+        const key = keys[currentIndex];
+        navigator.clipboard.writeText(key).then(() => {
+            copyMessageElement.style.display = 'block';
+            setTimeout(() => {
+                copyMessageElement.style.display = 'none';
+            }, 2000);
+        });
+    }
+</script>
+
+</body>
+</html>
